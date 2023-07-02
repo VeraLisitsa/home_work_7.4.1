@@ -28,62 +28,17 @@ public class Main {
         genText.start();
 
         Thread letA = new Thread(() -> {
-            String textMaxA = null;
-            int countMax = 0;
-            for (int j = 0; j < 10_000; j++) {
-                String text = null;
-                try {
-                    text = queueForA.take();
-                } catch (InterruptedException e) {
-                    return;
-                }
-                int countA = countLetters(text, 'a');
-                if (countA > countMax) {
-                    countMax = countA;
-                    textMaxA = text;
-                }
-            }
-            System.out.println("Текст с максимальным количеством букв а: " + textMaxA);
+            textMax(queueForA, 'a');
         });
         letA.start();
 
         Thread letB = new Thread(() -> {
-            String textMaxB = null;
-            int countMax = 0;
-            for (int j = 0; j < 10_000; j++) {
-                String text = null;
-                try {
-                    text = queueForB.take();
-                } catch (InterruptedException e) {
-                    return;
-                }
-                int countB = countLetters(text, 'b');
-                if (countB > countMax) {
-                    countMax = countB;
-                    textMaxB = text;
-                }
-            }
-            System.out.println("Текст с максимальным количеством букв b: " + textMaxB);
+            textMax(queueForB, 'b');
         });
         letB.start();
 
         Thread letC = new Thread(() -> {
-            String textMaxC = null;
-            int countMax = 0;
-            for (int j = 0; j < 10_000; j++) {
-                String text = null;
-                try {
-                    text = queueForC.take();
-                } catch (InterruptedException e) {
-                    return;
-                }
-                int countC = countLetters(text, 'c');
-                if (countC > countMax) {
-                    countMax = countC;
-                    textMaxC = text;
-                }
-            }
-            System.out.println("Текст с максимальным количеством букв c: " + textMaxC);
+            textMax(queueForC, 'c');
         });
         letC.start();
     }
@@ -105,5 +60,24 @@ public class Main {
             }
         }
         return count;
+    }
+
+    public static void textMax(BlockingQueue<String> queue, char letter) {
+        String textMax = null;
+        int countMax = 0;
+        for (int j = 0; j < 10_000; j++) {
+            String text;
+            try {
+                text = queue.take();
+            } catch (InterruptedException e) {
+                return;
+            }
+            int countA = countLetters(text, letter);
+            if (countA > countMax) {
+                countMax = countA;
+                textMax = text;
+            }
+        }
+        System.out.println("Текст с максимальным количеством букв " + letter + ": " + textMax);
     }
 }
